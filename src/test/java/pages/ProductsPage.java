@@ -16,6 +16,9 @@ public class ProductsPage {
     private final By sortDropdown = By.className("product_sort_container");
     private final By itemNames = By.className("inventory_item_name");
     private final By itemPrices = By.className("inventory_item_price");
+    private final By addBackpackButton = By.id("add-to-cart-sauce-labs-backpack");
+    private final By removeBackpackButton = By.id("remove-sauce-labs-backpack");
+    private final By cartBadge = By.className("shopping_cart_badge");
 
     public ProductsPage(WebDriver driver) {
         this.driver = driver;
@@ -44,6 +47,22 @@ public class ProductsPage {
         }
 
         return prices;
+    }
+
+    public void addBackpackToCart() {
+        driver.findElement(addBackpackButton).click();
+    }
+
+    public void removeBackpackFromCart() {
+        driver.findElement(removeBackpackButton).click();
+    }
+
+    public String getCartBadgeCount() {
+        return driver.findElement(cartBadge).getText();
+    }
+
+    public boolean isCartBadgeVisible() {
+        return driver.findElements(cartBadge).size() > 0;
     }
 
 }

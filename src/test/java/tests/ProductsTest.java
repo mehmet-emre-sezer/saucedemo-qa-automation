@@ -72,5 +72,24 @@ public class ProductsTest extends BaseTest {
 
         Assertions.assertEquals(expectedPrices, actualPrices);
     }
-    
+
+    @Test
+    @DisplayName("TC-PROD-006 - Add product to Cart")
+    void addProductToCart() {
+        ProductsPage productsPage = new ProductsPage(driver);
+
+        productsPage.addBackpackToCart();
+        Assertions.assertEquals("1", productsPage.getCartBadgeCount());
+    }
+
+    @Test
+    @DisplayName("TC-PROD-007 - Remove product from Cart")
+    void removeProductFromCart() {
+        ProductsPage productsPage = new ProductsPage(driver);
+
+        productsPage.addBackpackToCart();
+        productsPage.removeBackpackFromCart();
+        Assertions.assertFalse(productsPage.isCartBadgeVisible());
+    }
+
 }
