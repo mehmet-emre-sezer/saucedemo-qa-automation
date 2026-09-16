@@ -24,4 +24,13 @@ public class ProductsTest extends BaseTest {
         Assertions.assertEquals(6, productCount);
 
     }
+
+    @Test
+    @DisplayName("TC-PROD-002 - Sort name A to Z")
+    void sortNameAToZ() {
+        ProductsPage productsPage = new ProductsPage(driver);
+        productsPage.sortBy("az");
+        String firstProductName = productsPage.getFirstProductName();
+        Assertions.assertEquals("Sauce Labs Backpack", firstProductName);
+    }
 }
