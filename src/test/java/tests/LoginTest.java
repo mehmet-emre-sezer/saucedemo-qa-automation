@@ -29,4 +29,15 @@ public class LoginTest extends BaseTest {
                 "this service", error);
     }
 
+    @Test
+    @DisplayName("TC-LOGIN-003 - Wrong Username")
+    void wrongUsername(){
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("invalid_user", "secret_sauce");
+
+        String error = loginPage.getErrorMessage();
+        Assertions.assertEquals("Epic sadface: Username and password do not match any user in " +
+                "this service", error);
+    }
+
 }
