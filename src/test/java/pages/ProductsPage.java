@@ -20,6 +20,8 @@ public class ProductsPage {
     private final By removeBackpackButton = By.id("remove-sauce-labs-backpack");
     private final By cartBadge = By.className("shopping_cart_badge");
 
+    private final By cartLink = By.className("shopping_cart_link");
+
     public ProductsPage(WebDriver driver) {
         this.driver = driver;
     }
@@ -63,6 +65,12 @@ public class ProductsPage {
 
     public boolean isCartBadgeVisible() {
         return driver.findElements(cartBadge).size() > 0;
+    }
+
+    // Cart Testleri için Open Cart metotu
+
+    public void openCart() {
+        driver.findElement(cartLink).click();
     }
 
 }
