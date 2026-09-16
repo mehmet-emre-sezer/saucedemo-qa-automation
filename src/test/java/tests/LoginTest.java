@@ -40,4 +40,34 @@ public class LoginTest extends BaseTest {
                 "this service", error);
     }
 
+    @Test
+    @DisplayName("TC-LOGIN-004 - Empty Username")
+    void emptyUsername(){
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("", "secret_sauce");
+
+        String error = loginPage.getErrorMessage();
+        Assertions.assertEquals("Epic sadface: Username is required", error);
+    }
+
+    @Test
+    @DisplayName("TC-LOGIN-005 - Empty Password")
+    void emptyPassword(){
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("standard_user", "");
+
+        String error = loginPage.getErrorMessage();
+        Assertions.assertEquals("Epic sadface: Password is required", error);
+    }
+
+    @Test
+    @DisplayName("TC-LOGIN-006 - Locked User")
+    void lockedUser(){
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("locked_out_user", "secret_sauce");
+
+        String error = loginPage.getErrorMessage();
+        Assertions.assertEquals("Epic sadface: Sorry, this user has been locked out.", error);
+    }
+
 }
