@@ -18,4 +18,15 @@ public class LoginTest extends BaseTest {
         Assertions.assertTrue(currentUrl.contains("inventory.html"));
     }
 
+    @Test
+    @DisplayName("TC-LOGIN-002 - Wrong password")
+    void wrongPassword(){
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("standard_user", "wrong_pass");
+
+        String error = loginPage.getErrorMessage();
+        Assertions.assertEquals("Epic sadface: Username and password do not match any user in " +
+                "this service", error);
+    }
+
 }
