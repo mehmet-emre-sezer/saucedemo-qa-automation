@@ -2,6 +2,10 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -26,19 +30,43 @@ public class CartPage {
     }
 
     public String getItemName() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(itemName)).getText();
+        return safeGetText(itemName);
     }
 
     public String getItemPrice() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(itemPrice)).getText();
+        return safeGetText(itemPrice);
+    }
+
+    // Cart sayfası okuma sırasında yeniden render olup elementi bayatlatabiliyor;
+    // bayatlarsa yeniden bulup tekrar okuyana kadar bekler.
+    private String safeGetText(By locator) {
+        return wait.until(d -> {
+            try {
+                return d.findElement(locator).getText();
+            } catch (StaleElementReferenceException e) {
+                return null;
+            }
+        });
     }
 
     public int getCartItemCount() {
         return driver.findElements(cartItems).size();
     }
 
+    // Cart sayfası sürekli yeniden render olduğu için buton bulunup tıklanana kadar
+    // bayatlayabiliyor; başarana (ürün silinene) kadar birkaç kez tekrar dener.
     public void removeItem() {
-        driver.findElement(removeButton).click();
+        for (int attempt = 0; attempt < 5; attempt++) {
+            try {
+                WebElement button = driver.findElement(removeButton);
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
+                wait.until(ExpectedConditions.stalenessOf(button));
+                return;
+            } catch (StaleElementReferenceException | TimeoutException e) {
+                // yeniden render oldu ya da tıklama işlemedi; tekrar dene
+            }
+        }
+        throw new IllegalStateException("Ürün birkaç denemeye rağmen sepetten kaldırılamadı");
     }
 
     public void clickContinueShopping() {
