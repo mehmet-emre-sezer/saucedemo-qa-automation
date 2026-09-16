@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 public class SmokeTest extends BaseTest {
     @Test
-    public void pageOpens(){
+    public void pageOpens() {
         String title = driver.getTitle();
         Assertions.assertEquals("Swag Labs", title);
     }

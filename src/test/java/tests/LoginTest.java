@@ -10,7 +10,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("TC-LOGIN-001 - Valid credentials login")
-    void validLogin(){
+    void validLogin() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("standard_user", "secret_sauce");
 
@@ -20,7 +20,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("TC-LOGIN-002 - Wrong password")
-    void wrongPassword(){
+    void wrongPassword() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("standard_user", "wrong_pass");
 
@@ -31,7 +31,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("TC-LOGIN-003 - Wrong Username")
-    void wrongUsername(){
+    void wrongUsername() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("invalid_user", "secret_sauce");
 
@@ -42,7 +42,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("TC-LOGIN-004 - Empty Username")
-    void emptyUsername(){
+    void emptyUsername() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("", "secret_sauce");
 
@@ -52,7 +52,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("TC-LOGIN-005 - Empty Password")
-    void emptyPassword(){
+    void emptyPassword() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("standard_user", "");
 
@@ -62,7 +62,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("TC-LOGIN-006 - Locked User")
-    void lockedUser(){
+    void lockedUser() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("locked_out_user", "secret_sauce");
 
