@@ -2,7 +2,11 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductsPage {
 
@@ -11,6 +15,7 @@ public class ProductsPage {
     private final By inventoryItems = By.className("inventory_item");
     private final By sortDropdown = By.className("product_sort_container");
     private final By itemNames = By.className("inventory_item_name");
+    private final By itemPrices = By.className("inventory_item_price");
 
     public ProductsPage(WebDriver driver) {
         this.driver = driver;
@@ -27,6 +32,18 @@ public class ProductsPage {
 
     public String getFirstProductName() {
         return driver.findElements(itemNames).get(0).getText();
+    }
+
+    public List<Double> getProductPrices() {
+        List<WebElement> priceElements = driver.findElements(itemPrices);
+        List<Double> prices = new ArrayList<>();
+
+        for (WebElement priceElement : priceElements) {
+            String priceText = priceElement.getText().replace("$", "");
+            prices.add(Double.parseDouble(priceText));
+        }
+
+        return prices;
     }
 
 }
