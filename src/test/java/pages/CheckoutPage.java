@@ -6,7 +6,6 @@ import utils.ElementHelper;
 
 public class CheckoutPage {
 
-    private final WebDriver driver;
     private final ElementHelper helper;
 
     private final By firstNameInput = By.id("first-name");
@@ -15,23 +14,25 @@ public class CheckoutPage {
     private final By continueButton = By.id("continue");
     private final By cancelButton = By.id("cancel");
     private final By errorMessage = By.cssSelector("[data-test='error']");
+    private final By finishButton = By.id("finish");
+    private final By totalLabel = By.cssSelector("[data-test='total-label']");
+    private final By itemName = By.cssSelector("[data-test='inventory-item-name']");
 
 
     public CheckoutPage(WebDriver driver) {
-        this.driver = driver;
         this.helper = new ElementHelper(driver);
     }
 
     public void enterFirstName(String firstName) {
-        helper.type(firstNameInput,firstName);
+        helper.type(firstNameInput, firstName);
     }
 
     public void enterLastName(String lastName) {
-        helper.type(lastNameInput,lastName);
+        helper.type(lastNameInput, lastName);
     }
 
     public void enterPostalCode(String postalCode) {
-        helper.type(postalCodeInput,postalCode);
+        helper.type(postalCodeInput, postalCode);
     }
 
     public void clickContinue() {
@@ -52,4 +53,17 @@ public class CheckoutPage {
         enterPostalCode(postalCode);
         clickContinue();
     }
+
+    public String getItemName() {
+        return helper.getText(itemName);
+    }
+
+    public String getTotalText() {
+        return helper.getText(totalLabel);
+    }
+
+    public void clickFinish() {
+        helper.click(finishButton);
+    }
+
 }

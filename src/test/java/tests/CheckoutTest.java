@@ -47,5 +47,18 @@ public class CheckoutTest extends BaseTest {
         Assertions.assertEquals("Error: First Name is required", error);
     }
 
+    @Test
+    @DisplayName("TC-CHECKOUT-003 - Overview shows selected item and total")
+    void overviewShowsItemAndTotal() {
+        CheckoutPage checkoutPage = new CheckoutPage(driver);
+        checkoutPage.fillInformation("Mehmet", "Sezer", "34343");
+
+        String itemName = checkoutPage.getItemName();
+        String total = checkoutPage.getTotalText();
+
+        Assertions.assertEquals("Sauce Labs Backpack", itemName);
+        Assertions.assertTrue(total.contains("Total"));
+    }
+
 
 }
