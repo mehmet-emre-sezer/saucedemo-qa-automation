@@ -60,5 +60,19 @@ public class CheckoutTest extends BaseTest {
         Assertions.assertTrue(total.contains("Total"));
     }
 
+    @Test
+    @DisplayName("TC-CHECKOUT-004 - Finish shows Confirmation")
+    void finishShowsConfirmation() {
+        CheckoutPage checkoutPage = new CheckoutPage(driver);
+        checkoutPage.fillInformation("Mehmet", "Sezer", "34343");
+        checkoutPage.clickFinish();
+
+        String completeMessage = checkoutPage.getCompleteHeader();
+
+        Assertions.assertEquals("Thank you for your order!", completeMessage);
+    }
+
+
+
 
 }

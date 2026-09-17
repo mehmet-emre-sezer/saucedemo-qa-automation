@@ -17,6 +17,7 @@ public class CheckoutPage {
     private final By finishButton = By.id("finish");
     private final By totalLabel = By.cssSelector("[data-test='total-label']");
     private final By itemName = By.cssSelector("[data-test='inventory-item-name']");
+    private final By completeHeader = By.cssSelector("[data-test='complete-header']");
 
 
     public CheckoutPage(WebDriver driver) {
@@ -64,6 +65,10 @@ public class CheckoutPage {
 
     public void clickFinish() {
         helper.click(finishButton);
+    }
+
+    public String getCompleteHeader() {
+        return helper.getText(completeHeader);
     }
 
 }
