@@ -35,5 +35,17 @@ public class CheckoutTest extends BaseTest {
         Assertions.assertEquals("https://www.saucedemo.com/checkout-step-two.html",currentUrl);
     }
 
+    @Test
+    @DisplayName("TC-CHECKOUT-002 - Missing First name Shows Error")
+    void missingFirstNameShowsError() {
+        CheckoutPage checkoutPage = new CheckoutPage(driver);
+        checkoutPage.enterLastName("Sezer");
+        checkoutPage.enterPostalCode("34343");
+        checkoutPage.clickContinue();
+
+        String error = checkoutPage.getErrorMessage();
+        Assertions.assertEquals("Error: First Name is required", error);
+    }
+
 
 }
