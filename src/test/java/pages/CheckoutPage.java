@@ -53,6 +53,9 @@ public class CheckoutPage {
         enterLastName(lastName);
         enterPostalCode(postalCode);
         clickContinue();
+        // Continue sonrası step-two yüklenene kadar bekle (finish butonu step-two'ya özgü).
+        // Böylece yavaş CI'da navigasyon tamamlanmadan URL/element okunmaz.
+        helper.waitForVisible(finishButton);
     }
 
     public String getItemName() {
