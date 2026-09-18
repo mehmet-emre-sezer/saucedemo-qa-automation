@@ -73,11 +73,22 @@ public class CartPage {
         driver.findElement(continueToShoppingButton).click();
     }
 
+    // Cart sayfası React; yeni yüklendiğinde checkout butonunun onClick handler'ı
+    // henüz bağlı olmayabiliyor, native tıklama yavaş CI'da navigasyonu tetiklemiyor
+    // (removeItem ile aynı ders). JS click + step-one'a geçene kadar retry.
     public void clickCheckout() {
-        wait.until(ExpectedConditions.elementToBeClickable(checkoutButton)).click();
-        // Checkout step-one'a gerçekten geçildiğini doğrula; yavaş CI'da
-        // sayfa yüklenmeden testin form doldurmaya başlamasını engeller.
-        wait.until(ExpectedConditions.urlContains("checkout-step-one"));
+        WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(2));
+        for (int attempt = 0; attempt < 6; attempt++) {
+            try {
+                WebElement button = wait.until(ExpectedConditions.elementToBeClickable(checkoutButton));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
+                shortWait.until(ExpectedConditions.urlContains("checkout-step-one"));
+                return;
+            } catch (StaleElementReferenceException | TimeoutException e) {
+                // handler henüz hazır değil / tıklama navigasyonu tetiklemedi; tekrar dene
+            }
+        }
+        throw new IllegalStateException("Checkout step-one'a birkaç denemeye rağmen geçilemedi");
     }
 
 
