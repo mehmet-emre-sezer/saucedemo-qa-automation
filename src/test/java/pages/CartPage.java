@@ -74,7 +74,10 @@ public class CartPage {
     }
 
     public void clickCheckout() {
-        driver.findElement(checkoutButton).click();
+        wait.until(ExpectedConditions.elementToBeClickable(checkoutButton)).click();
+        // Checkout step-one'a gerçekten geçildiğini doğrula; yavaş CI'da
+        // sayfa yüklenmeden testin form doldurmaya başlamasını engeller.
+        wait.until(ExpectedConditions.urlContains("checkout-step-one"));
     }
 
 
