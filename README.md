@@ -1,5 +1,7 @@
 # SauceDemo QA Automation
 
+![CI](https://github.com/mehmet-emre-sezer/saucedemo-qa-automation/actions/workflows/ci.yml/badge.svg)
+
 End-to-end UI test automation for [SauceDemo](https://www.saucedemo.com), built as a
 **full QA workflow** — not just Selenium scripts. It demonstrates the complete chain a
 professional tester owns:
