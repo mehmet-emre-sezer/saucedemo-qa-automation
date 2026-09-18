@@ -1,13 +1,11 @@
 package pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.ElementHelper;
 
 import java.time.Duration;
 
@@ -15,6 +13,7 @@ public class CartPage {
 
     private final WebDriver driver;
     private final WebDriverWait wait;
+    private final ElementHelper helper;
 
     private final By cartItems = By.className("cart_item");
     private final By itemName = By.className("inventory_item_name");
@@ -27,6 +26,7 @@ public class CartPage {
     public CartPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.helper = new ElementHelper(driver);
     }
 
     public String getItemName() {
@@ -53,43 +53,21 @@ public class CartPage {
         return driver.findElements(cartItems).size();
     }
 
-    // Cart sayfası sürekli yeniden render olduğu için buton bulunup tıklanana kadar
-    // bayatlayabiliyor; başarana (ürün silinene) kadar birkaç kez tekrar dener.
+    // Cart React; buton native click ile bayatlayabiliyor/işlemeyebiliyor.
+    // JS click + ürün (remove butonu) kaybolana kadar retry.
     public void removeItem() {
-        for (int attempt = 0; attempt < 5; attempt++) {
-            try {
-                WebElement button = driver.findElement(removeButton);
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
-                wait.until(ExpectedConditions.stalenessOf(button));
-                return;
-            } catch (StaleElementReferenceException | TimeoutException e) {
-                // yeniden render oldu ya da tıklama işlemedi; tekrar dene
-            }
-        }
-        throw new IllegalStateException("Ürün birkaç denemeye rağmen sepetten kaldırılamadı");
+        helper.jsClickUntil(removeButton, ExpectedConditions.invisibilityOfElementLocated(removeButton));
     }
 
     public void clickContinueShopping() {
         driver.findElement(continueToShoppingButton).click();
     }
 
-    // Cart sayfası React; yeni yüklendiğinde checkout butonunun onClick handler'ı
-    // henüz bağlı olmayabiliyor, native tıklama yavaş CI'da navigasyonu tetiklemiyor
-    // (removeItem ile aynı ders). JS click + step-one'a geçene kadar retry.
+    // Cart React; yeni yüklendiğinde checkout onClick handler'ı henüz bağlı
+    // olmayabiliyor, native tıklama yavaş CI'da navigasyonu tetiklemiyor.
+    // JS click + step-one'a geçene kadar retry.
     public void clickCheckout() {
-        WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(2));
-        for (int attempt = 0; attempt < 6; attempt++) {
-            try {
-                WebElement button = wait.until(ExpectedConditions.elementToBeClickable(checkoutButton));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
-                shortWait.until(ExpectedConditions.urlContains("checkout-step-one"));
-                return;
-            } catch (StaleElementReferenceException | TimeoutException e) {
-                // handler henüz hazır değil / tıklama navigasyonu tetiklemedi; tekrar dene
-            }
-        }
-        throw new IllegalStateException("Checkout step-one'a birkaç denemeye rağmen geçilemedi");
+        helper.jsClickUntil(checkoutButton, ExpectedConditions.urlContains("checkout-step-one"));
     }
-
 
 }

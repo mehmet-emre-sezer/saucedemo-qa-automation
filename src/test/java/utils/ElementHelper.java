@@ -2,9 +2,12 @@ package utils;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -22,9 +25,11 @@ import java.time.Duration;
  */
 public class ElementHelper {
 
+    private final WebDriver driver;
     private final WebDriverWait wait;
 
     public ElementHelper(WebDriver driver) {
+        this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
@@ -83,5 +88,27 @@ public class ElementHelper {
     // Bir elementin görünür olmasını bekler (navigasyon/sayfa geçişi doğrulaması için).
     public void waitForVisible(By locator) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    /**
+     * Yalnızca native click'in güvenilmez olduğu bilinen yerler için — özellikle
+     * SauceDemo (React) butonlarında, sayfa yeni yüklendiğinde onClick handler'ı
+     * henüz bağlı olmadığından native tıklama işlemi tetiklemiyor.
+     * Sonucu ayrıca doğruladığı (successCondition) için gerçek bir hatayı gizlemez.
+     * Varsayılan tıklama için {@link #click(By)} kullanılmalı.
+     */
+    public <T> void jsClickUntil(By locator, ExpectedCondition<T> successCondition) {
+        WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(2));
+        for (int attempt = 0; attempt < 6; attempt++) {
+            try {
+                WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+                shortWait.until(successCondition);
+                return;
+            } catch (StaleElementReferenceException | TimeoutException e) {
+                // handler henüz hazır değil / işlem tamamlanmadı; tekrar dene
+            }
+        }
+        throw new IllegalStateException("jsClickUntil başarısız (koşul sağlanmadı): " + locator);
     }
 }
