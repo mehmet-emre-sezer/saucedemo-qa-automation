@@ -29,6 +29,9 @@ public class ElementHelper {
     }
 
     // Güvenli yazma: element hazır olana kadar bekler, yazar ve değeri doğrular.
+    // SauceDemo React uygulaması: BOŞ bir input'a clear() çağırmak yavaş CI'da
+    // sonraki sendKeys'i bozuyor (clear -> onChange -> re-render -> yazı kayboluyor).
+    // Bu yüzden yalnızca alan doluysa temizliyoruz (LoginPage gibi düz sendKeys).
     public void type(By locator, String text) {
         wait.until(d -> {
             try {
@@ -36,7 +39,10 @@ public class ElementHelper {
                 if (!element.isDisplayed() || !element.isEnabled()) {
                     return null;
                 }
-                element.clear();
+                String current = element.getAttribute("value");
+                if (current != null && !current.isEmpty()) {
+                    element.clear();
+                }
                 element.sendKeys(text);
                 // sendKeys gerçekten yerleşti mi? Yerleşmediyse tekrar dene.
                 return text.equals(element.getAttribute("value")) ? Boolean.TRUE : null;
