@@ -1,0 +1,27 @@
+name: CI
+
+# Ne zaman çalışsın
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run UI test suite
+    runs-on: ubuntu-latest   # Chrome kurulu geldiği için
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven          # bağımlılıkları önbelleğe al
+
+      - name: Run tests
+        run: mvn -B test        # -B = batch mode (CI için sessiz/temiz çıktı)
